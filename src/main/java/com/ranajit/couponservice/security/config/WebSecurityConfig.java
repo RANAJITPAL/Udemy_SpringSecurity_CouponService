@@ -25,18 +25,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().mvcMatchers(HttpMethod.GET,
+        httpSecurity.httpBasic();
+        httpSecurity.authorizeRequests()
+                .mvcMatchers(HttpMethod.GET,
                         "/couponapi/coupons/{code:^[A-Z,a-z,0-9]*$}", "/index","/showGetCoupon", "/getCoupon",
                         "/couponDetails")
                 .hasAnyRole("USER", "ADMIN")
-                .mvcMatchers(HttpMethod.GET, "/showCreateCoupon", "/createCoupon", "/createResponse").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.POST, "/getCoupon").hasAnyRole("USER", "ADMIN")
+//                .mvcMatchers(HttpMethod.GET, "/showCreateCoupon", "/createCoupon", "/createResponse").hasRole("ADMIN")
+//                .mvcMatchers(HttpMethod.POST, "/getCoupon").hasAnyRole("USER", "ADMIN")
                 .mvcMatchers(HttpMethod.POST, "/couponapi/coupons", "/saveCoupon",
                         "/getCoupon").hasRole("ADMIN")
-                .mvcMatchers("/login","/","/showRegistration","/registerUser").permitAll()
+//                .mvcMatchers("/login","/","/showRegistration","/registerUser").permitAll()
                 .anyRequest().denyAll()
-                .and().csrf().disable()
-                .logout().logoutSuccessUrl("/");
+                .and().csrf().disable();
+//                .logout().logoutSuccessUrl("/");
     }
 
     @Bean
