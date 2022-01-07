@@ -24,7 +24,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId(RESOURCE_ID);
+        resources.resourceId(RESOURCE_ID).tokenStore(tokenStore());
     }
 
     @Override
@@ -35,6 +35,21 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST,"/couponapi/coupons")
                 .hasRole("ADMIN")
                 .anyRequest().denyAll().and().csrf().disable();
+    }
+
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter(){
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+//        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource(keyFile), password.toCharArray());
+//        KeyPair keyPair = keyStoreKeyFactory.getKeyPair(alias);
+//        jwtAccessTokenConverter.setKeyPair(keyPair);
+        jwtAccessTokenConverter.setSigningKey("testkey");
+        return jwtAccessTokenConverter;
+    }
+
+    @Bean
+    public TokenStore tokenStore(){
+        return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
 
