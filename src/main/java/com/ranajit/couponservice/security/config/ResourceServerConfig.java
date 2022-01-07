@@ -22,9 +22,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     public static final String RESOURCE_ID = "couponservice";
 
-    @Value("${publicKey}")
-    private String publicKey;
-
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId(RESOURCE_ID);
@@ -40,15 +37,5 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .anyRequest().denyAll().and().csrf().disable();
     }
 
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(){
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setVerifierKey(publicKey);
-        return jwtAccessTokenConverter;
-    }
 
-    @Bean
-    public TokenStore tokenStore(){
-        return new JwtTokenStore(jwtAccessTokenConverter());
-    }
 }
