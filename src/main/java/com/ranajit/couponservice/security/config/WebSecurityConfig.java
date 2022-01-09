@@ -11,8 +11,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
-//@Configuration
+import java.util.List;
+
+@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -30,15 +34,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET,
                         "/couponapi/coupons/{code:^[A-Z,a-z,0-9]*$}", "/index","/showGetCoupon", "/getCoupon",
                         "/couponDetails")
-                .hasAnyRole("USER", "ADMIN")
-//                .mvcMatchers(HttpMethod.GET, "/showCreateCoupon", "/createCoupon", "/createResponse").hasRole("ADMIN")
-//                .mvcMatchers(HttpMethod.POST, "/getCoupon").hasAnyRole("USER", "ADMIN")
+                //.hasAnyRole("USER", "ADMIN")
+                .permitAll()
+                .mvcMatchers(HttpMethod.GET, "/showCreateCoupon", "/createCoupon", "/createResponse").hasRole("ADMIN")
+                .mvcMatchers(HttpMethod.POST, "/getCoupon").hasAnyRole("USER", "ADMIN")
                 .mvcMatchers(HttpMethod.POST, "/couponapi/coupons", "/saveCoupon",
                         "/getCoupon").hasRole("ADMIN")
-//                .mvcMatchers("/login","/","/showRegistration","/registerUser").permitAll()
-                .anyRequest().denyAll()
-                .and().csrf().disable();
-//                .logout().logoutSuccessUrl("/");
+                .mvcMatchers("/login","/","/showRegistration","/registerUser").permitAll()
+                .anyRequest().denyAll().and()
+//                .csrf().disable()
+                .logout().logoutSuccessUrl("/");
+
+        httpSecurity.cors(corsCustomizer->{
+            CorsConfigurationSource corsConfigurationSource = httpServletRequest -> {
+                CorsConfiguration corsConfiguration = new CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(List.of("localhost:3000"));
+                corsConfiguration.setAllowedMethods(List.of("GET"));
+                return corsConfiguration;
+            };
+            corsCustomizer.configurationSource(corsConfigurationSource);
+        });
     }
 
     @Bean
