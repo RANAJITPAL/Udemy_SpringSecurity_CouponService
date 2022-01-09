@@ -4,6 +4,7 @@ package com.ranajit.couponservice.controller;
 import com.ranajit.couponservice.entity.Coupon;
 import com.ranajit.couponservice.repository.CouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class CouponRestController {
     }
 
     @GetMapping("/coupons/{code}")
+    @PostAuthorize("returnObject.discount>100")
     public Coupon getCoupon(@PathVariable("code") String code){
         return couponRepository.findByCode(code);
     }
